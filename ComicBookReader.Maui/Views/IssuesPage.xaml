@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:m="clr-namespace:ComicBookReader.CoreBusiness;assembly=ComicBookReader.CoreBusiness"
+             xmlns:vm="clr-namespace:ComicBookReader.Maui.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:DataType="vm:IssuesViewModel"
+             x:Class="ComicBookReader.Maui.Views.IssuesPage"
+             Title="Comic Book Reader">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageSourceConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <StackLayout Padding="10" Spacing="10">
+        
+        <Button 
+            HorizontalOptions="Center"
+            VerticalOptions="Start"
+            Text="Add Comic Folder"
+            Command="{Binding AddPathCommand}"></Button>
+
+        <Label 
+            Text="{Binding ComicFolder.Name}" 
+            FontAttributes="Bold"
+            FontSize="Medium"
+            HorizontalOptions="Center"
+            VerticalOptions="Start"></Label>
+
+        <CollectionView x:Name="IssuesCollection" 
+                        ItemsSource="{Binding Issues}" 
+                        ItemsLayout="VerticalGrid, 3" 
+                        VerticalOptions="FillAndExpand">
+            
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:ComicIssue">
+                    <StackLayout Padding="5">
+                        <ImageButton
+                            Aspect="AspectFit" 
+                            HeightRequest="150"
+                            Source="{Binding Cover, Mode=OneWay, Converter={StaticResource ByteArrayToImageSourceConverter}}" 
+                            Command="{Binding Source={x:Reference IssuesCollection}, Path=BindingContext.GoToIssueCommand}"
+                            CommandParameter="{Binding Path}">
+                        </ImageButton>
+                        <Label Text="{Binding Name}" HorizontalOptions="Center" LineBreakMode="MiddleTruncation"></Label>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            
+        </CollectionView>
+    </StackLayout>
+</ContentPage>
