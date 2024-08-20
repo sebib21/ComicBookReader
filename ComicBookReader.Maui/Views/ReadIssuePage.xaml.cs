@@ -21,7 +21,7 @@ public partial class ReadIssuePage : ContentPage
         {
             if(!string.IsNullOrEmpty(value) && File.Exists(value))
             {
-                LoadComicIssue(value);
+                Task.Run(() => LoadComicIssue(value));
             }
         }
     }

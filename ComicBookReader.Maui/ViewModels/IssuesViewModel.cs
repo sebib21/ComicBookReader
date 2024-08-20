@@ -1,4 +1,5 @@
 ﻿using ComicBookReader.CoreBusiness;
+using ComicBookReader.Maui.Helpers;
 using ComicBookReader.Maui.Views;
 using ComicBookReader.UseCases.Interfaces;
 using CommunityToolkit.Maui.Storage;
@@ -66,27 +67,27 @@ namespace ComicBookReader.Maui.ViewModels
         {
             try
             {
-                if (Directory.Exists(path))
+                if (!Directory.Exists(path))
                 {
-                    var files = Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly)
-                                 .Where(file => file.EndsWith(".cbr", StringComparison.OrdinalIgnoreCase) ||
-                                                    file.EndsWith(".cbz", StringComparison.OrdinalIgnoreCase)).ToArray();
-
-                    if (files.Length == 0)
-                    {
-                        await Application.Current.MainPage.DisplayAlert("Error", "The folder should contain files with the extensions .cbr or .cbz!", "OK");
-                        return false;
-                    }
+                    await ApplicationAlertHelper.ShowAlert("Error", "The folder doesn't exist!", "OK");
+                    return false;
                 }
-                else
+
+                var files = Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly)
+                                .Where(file => file.EndsWith(".cbr", StringComparison.OrdinalIgnoreCase) ||
+                                               file.EndsWith(".cbz", StringComparison.OrdinalIgnoreCase))
+                                .ToArray();
+
+                if (files.Length == 0)
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "The folder doesn't exist!", "OK");
+                    await ApplicationAlertHelper.ShowAlert("Error", "The folder should contain files with the extensions .cbr or .cbz!", "OK");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+                await ApplicationAlertHelper.ShowAlert("Error", ex.Message, "OK");
+                return false;
             }
 
             return true;
